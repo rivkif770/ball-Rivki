@@ -12,8 +12,10 @@ function initGame() {
 	gGamerPos = { i: 2, j: 9 };
 	gBoard = buildBoard();
 	renderBoard(gBoard);
-}
 
+	setInterval(addRandomBall, 5000);
+
+}
 
 function buildBoard() {
 	// Create the Matrix
@@ -86,6 +88,27 @@ function renderBoard(board) {
 	elBoard.innerHTML = strHTML;
 }
 
+function addRandomBall() {
+    var emptyCells = [];
+
+    //Search all free cells (only floor without other elements)
+    for (var i = 1; i < gBoard.length - 1; i++) {
+        for (var j = 1; j < gBoard[0].length - 1; j++) {
+            if (gBoard[i][j].type === FLOOR && !gBoard[i][j].gameElement) {
+                emptyCells.push({ i: i, j: j });
+            }
+        }
+    }
+
+    // If there are free cells, pick a random one and add a ball
+    if (emptyCells.length) {
+        var randIdx = Math.floor(Math.random() * emptyCells.length);
+        var emptyCell = emptyCells[randIdx];
+        gBoard[emptyCell.i][emptyCell.j].gameElement = BALL;
+        renderCell(emptyCell, BALL_IMG); // עדכן את ה-DOM עם הכדור החדש
+    }
+}
+
 // Move the player to a specific location
 function moveTo(i, j) {
 
@@ -100,6 +123,7 @@ function moveTo(i, j) {
 	if ((iAbsDiff === 1 && jAbsDiff === 0) || (jAbsDiff === 1 && iAbsDiff === 0)) {
 
 		if (targetCell.gameElement === BALL) {
+			//להוסיף count
 			console.log('Collecting!');
 		}
 
