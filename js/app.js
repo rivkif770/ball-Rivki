@@ -9,6 +9,8 @@ var BALL_IMG = '<img src="img/ball.png" />';
 var gBoard;
 var gGamerPos;
 var gBallsCollected = 0;
+var gTotalBalls = 2;
+
 function initGame() {
 	gGamerPos = { i: 2, j: 9 };
 	gBoard = buildBoard();
@@ -91,24 +93,25 @@ function renderBoard(board) {
 }
 
 function addRandomBall() {
-    var emptyCells = [];
+	var emptyCells = [];
 
-    //Search all free cells (only floor without other elements)
-    for (var i = 1; i < gBoard.length - 1; i++) {
-        for (var j = 1; j < gBoard[0].length - 1; j++) {
-            if (gBoard[i][j].type === FLOOR && !gBoard[i][j].gameElement) {
-                emptyCells.push({ i: i, j: j });
-            }
-        }
-    }
+	//Search all free cells (only floor without other elements)
+	for (var i = 1; i < gBoard.length - 1; i++) {
+		for (var j = 1; j < gBoard[0].length - 1; j++) {
+			if (gBoard[i][j].type === FLOOR && !gBoard[i][j].gameElement) {
+				emptyCells.push({ i: i, j: j });
+			}
+		}
+	}
 
-    // If there are free cells, pick a random one and add a ball
-    if (emptyCells.length) {
-        var randIdx = Math.floor(Math.random() * emptyCells.length);
-        var emptyCell = emptyCells[randIdx];
-        gBoard[emptyCell.i][emptyCell.j].gameElement = BALL;
-        renderCell(emptyCell, BALL_IMG); // עדכן את ה-DOM עם הכדור החדש
-    }
+	// If there are free cells, pick a random one and add a ball
+	if (emptyCells.length) {
+		var randIdx = Math.floor(Math.random() * emptyCells.length);
+		var emptyCell = emptyCells[randIdx];
+		gBoard[emptyCell.i][emptyCell.j].gameElement = BALL;
+		renderCell(emptyCell, BALL_IMG);
+		gTotalBalls++;
+	}
 }
 
 // Move the player to a specific location
@@ -125,11 +128,15 @@ function moveTo(i, j) {
 	if ((iAbsDiff === 1 && jAbsDiff === 0) || (jAbsDiff === 1 && iAbsDiff === 0)) {
 
 		if (targetCell.gameElement === BALL) {
-			gBallsCollected++; 
+			gBallsCollected++;
+			gTotalBalls--;
 			console.log('Collected! Total balls:', gBallsCollected);
-			updateScore(); 
+			updateScore();
+			if (gTotalBalls === 0) {
+				victory();
+			}
 		}
-		
+
 
 		// MOVING from current position
 		// Model:
@@ -192,6 +199,30 @@ function updateScore() {
     var elScore = document.querySelector('.score');
     elScore.innerHTML = 'Balls Collected: ' + gBallsCollected;
 }
+
+function victory() {
+	alert('Congratulations! You collected all the balls!');
+	showRestartButton();
+}
+
+function showRestartButton() {
+	var elRestartBtn = document.querySelector('.restart-btn');
+	elRestartBtn.style.display = 'block';
+}
+
+function restartGame() {
+	gBallsCollected = 0;
+	gTotalBalls = 2;
+	updateScore();
+
+	gGamerPos = { i: 2, j: 9 };
+	gBoard = buildBoard();
+	renderBoard(gBoard);
+
+	var elRestartBtn = document.querySelector('.restart-btn');
+	elRestartBtn.style.display = 'none';
+}
+
 
 
 
