@@ -8,11 +8,13 @@ var BALL_IMG = '<img src="img/ball.png" />';
 
 var gBoard;
 var gGamerPos;
+var gBallsCollected = 0;
 function initGame() {
 	gGamerPos = { i: 2, j: 9 };
 	gBoard = buildBoard();
 	renderBoard(gBoard);
 
+	updateScore();
 	setInterval(addRandomBall, 5000);
 
 }
@@ -123,9 +125,11 @@ function moveTo(i, j) {
 	if ((iAbsDiff === 1 && jAbsDiff === 0) || (jAbsDiff === 1 && iAbsDiff === 0)) {
 
 		if (targetCell.gameElement === BALL) {
-			//להוסיף count
-			console.log('Collecting!');
+			gBallsCollected++; 
+			console.log('Collected! Total balls:', gBallsCollected);
+			updateScore(); 
 		}
+		
 
 		// MOVING from current position
 		// Model:
@@ -183,4 +187,12 @@ function getClassName(location) {
 	console.log('cellClass:', cellClass);
 	return cellClass;
 }
+
+function updateScore() {
+    var elScore = document.querySelector('.score');
+    elScore.innerHTML = 'Balls Collected: ' + gBallsCollected;
+}
+
+
+
 
