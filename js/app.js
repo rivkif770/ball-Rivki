@@ -52,6 +52,12 @@ function buildBoard() {
 	board[3][8].gameElement = BALL;
 	board[7][4].gameElement = BALL;
 
+	board[5][0].type = FLOOR;
+	board[5][11].type = FLOOR;
+
+	board[0][6].type = FLOOR;
+	board[9][6].type = FLOOR;
+
 	console.log(board);
 	return board;
 }
@@ -116,6 +122,16 @@ function addRandomBall() {
 
 // Move the player to a specific location
 function moveTo(i, j) {
+	if (i === 5 && j === 0) {
+		j = 11;
+	} else if (i === 5 && j === 11) {
+		j = 0;
+	}
+	if (i === 0 && j === 6) {
+		i = 9;
+	} else if (i === 9 && j === 6) {
+		i = 0;
+	}
 
 	var targetCell = gBoard[i][j];
 	if (targetCell.type === WALL) return;
@@ -125,7 +141,7 @@ function moveTo(i, j) {
 	var jAbsDiff = Math.abs(j - gGamerPos.j);
 
 	// If the clicked Cell is one of the four allowed
-	if ((iAbsDiff === 1 && jAbsDiff === 0) || (jAbsDiff === 1 && iAbsDiff === 0)) {
+    if ((iAbsDiff === 1 && jAbsDiff === 0) || (jAbsDiff === 1 && iAbsDiff === 0) || (i === 5 && (j === 0 || j === 11)) || (j === 6 && (i === 0 || i === 9))) {
 
 		if (targetCell.gameElement === BALL) {
 			gBallsCollected++;
@@ -196,8 +212,8 @@ function getClassName(location) {
 }
 
 function updateScore() {
-    var elScore = document.querySelector('.score');
-    elScore.innerHTML = 'Balls Collected: ' + gBallsCollected;
+	var elScore = document.querySelector('.score');
+	elScore.innerHTML = 'Balls Collected: ' + gBallsCollected;
 }
 
 function victory() {
